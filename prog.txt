@@ -1,0 +1,96 @@
+int ped = 0;
+int btcounter = 0;
+int bttimer;
+int btdelay;
+
+void setup(){
+  pinMode(3, OUTPUT);		//led vermelho
+  pinMode(4, OUTPUT);		//led amarelo
+  pinMode(5, OUTPUT);		//led verde
+  pinMode(6, OUTPUT);		//led vermelho pedestre
+  pinMode(7, OUTPUT);		//led verde pedestre
+  digitalWrite(6, HIGH);	//led vm pedestre começa ligado
+  
+  pinMode(2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(2), semaPed, FALLING);
+  Serial.begin(9600);
+}
+
+void loop(){
+  while (btcounter < 5){
+  semavd();
+  if (ped == 1){
+    semaforoPed();
+    ped = 0;
+  }
+  semaforo();
+  }
+  
+  if (btcounter >= 5){
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
+    digitalWrite(6, HIGH);
+    digitalWrite(7, HIGH);
+    delay(5000);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+    digitalWrite(6, LOW);
+    digitalWrite(7, LOW);
+  }
+}
+    
+    // Demais funções usadas no código:
+
+void semaPed(){
+  ped = 1;					// Condição pro semafaro de pedestre
+  btcounter = btcounter + 1;
+  bttimer = millis();
+  
+  btdelay = (millis() - bttimer);
+  Serial.println(btcounter);
+  if (btdelay > 500){
+    btcounter = 0;
+  }
+}
+
+void semaforoPed(){
+  digitalWrite(4, HIGH);	// Tempo do semaforo amarelo, so que 1 segundo a menos
+  delay(2000);
+  digitalWrite(4, LOW);
+  digitalWrite(3, HIGH);	// Semaforo vermelho liga
+  digitalWrite(6, LOW);	// Semaforo vermelho dos pedestres desliga
+  digitalWrite(7, HIGH);	// Semaforo verde dos pedestres liga
+  
+  delay(3500);
+  for (int i=0; i<=3;i++){	// Pisca o vermelho dos pedestres 3x antes de acabar
+  	delay(250);
+  	digitalWrite(6, LOW);
+  	delay(250);
+  	digitalWrite(6, HIGH);
+  }
+  digitalWrite(7, LOW);	// Semaforo verde dos pedestres desliga
+}
+
+void semavd(){				// Rotina do semaforo verde separada
+  digitalWrite(5, HIGH);	// (Primariamente fica ligado por 3 segundos para caso tenha pe-
+  delay(3000);				//   destre. Se o pedestre não tiver acionado, a proxima rotina 
+  digitalWrite(5, LOW);		//   alonga esse tempo em mais 2 segundos)
+}
+
+void semaforo(){			// Resto da rotina do semaforo
+  digitalWrite(5, HIGH);
+  delay(2000);
+  digitalWrite(5, LOW);
+  digitalWrite(4, HIGH);
+  delay(3000);
+  digitalWrite(4, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, HIGH);
+  digitalWrite(3, HIGH);
+  delay(5000);
+  digitalWrite(3, LOW);
+  digitalWrite(7, LOW);
+  digitalWrite(6, HIGH);
+}
