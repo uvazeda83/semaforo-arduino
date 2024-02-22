@@ -38,6 +38,7 @@ void loop(){
     digitalWrite(5, LOW);
     digitalWrite(6, LOW);
     digitalWrite(7, LOW);
+    btcounter = 0;			// Outro zerador do btcounter por segurança
   }
 }
     
@@ -60,7 +61,7 @@ void semaforoPed(){
   delay(2000);
   digitalWrite(4, LOW);
   digitalWrite(3, HIGH);	// Semaforo vermelho liga
-  digitalWrite(6, LOW);	// Semaforo vermelho dos pedestres desliga
+  digitalWrite(6, LOW);		// Semaforo vermelho dos pedestres desliga
   digitalWrite(7, HIGH);	// Semaforo verde dos pedestres liga
   
   delay(3500);
@@ -70,7 +71,7 @@ void semaforoPed(){
   	delay(250);
   	digitalWrite(6, HIGH);
   }
-  digitalWrite(7, LOW);	// Semaforo verde dos pedestres desliga
+  digitalWrite(7, LOW);		// Semaforo verde dos pedestres desliga
 }
 
 void semavd(){				// Rotina do semaforo verde separada
